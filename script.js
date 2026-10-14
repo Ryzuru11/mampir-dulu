@@ -1,0 +1,493 @@
+/* ═══════════════════════════════════════════════
+   MAMPIR DULU — script.js
+   Handles: navbar, order qty, form validation,
+            order ID generation, modal, WA message
+   ═══════════════════════════════════════════════ */
+
+'use strict';
+
+/* ─────────────────────────────────────
+   CONFIG — ganti nomor WA admin di sini
+───────────────────────────────────── */
+const CONFIG = {
+  adminWA: '6285237648941',   // WA Admin Mampir Dulu
+  storeName: 'Mampir Dulu',
+  location: 'Lt. 1 Gedung Siti Moendjijah, UNISA Yogyakarta',
+};
+
+/* ─────────────────────────────────────
+   PRICES
+───────────────────────────────────── */
+const PRICES = {
+  bakso: 1000,
+  es:    6000,
+  paket: 10000,
+};
+
+const PRODUCT_NAMES = {
+  bakso: 'Bakso Tahu Goreng',
+  es:    'Es Mangga Lumut',
+  paket: 'Paket Mampir Dulu (5 Bakso + 1 Es)',
+};
+
+/* ─────────────────────────────────────
+   STATE
+───────────────────────────────────── */
+const qty = { bakso: 0, es: 0, paket: 0 };
+
+/* ═══════════════════════════════════
+   1. NAVBAR — scroll effect + mobile
+═══════════════════════════════════ */
+const navbar    = document.getElementById('navbar');
+const hamburger = document.getElementById('hamburger');
+const navLinks  = document.getElementById('navLinks');
+
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+
+  // scroll-to-top button
+  const scrollBtn = document.getElementById('scrollTop');
+  scrollBtn.classList.toggle('visible', window.scrollY > 300);
+
+  // active nav link highlight
+  highlightActiveNav();
+});
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navLinks.classList.toggle('open');
+});
+
+// Close mobile nav when a link is clicked
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('open');
+  });
+});
+
+function highlightActiveNav() {
+  const sections = document.querySelectorAll('section[id]');
+  const scrollY  = window.scrollY + 90;
+  sections.forEach(sec => {
+    const top    = sec.offsetTop;
+    const height = sec.offsetHeight;
+    const link   = navLinks.querySelector(`a[href="#${sec.id}"]`);
+    if (link) link.classList.toggle('active', scrollY >= top && scrollY < top + height);
+  });
+}
+
+/* ═══════════════════════════════════
+   2. SCROLL-TO-TOP BUTTON
+═══════════════════════════════════ */
+document.getElementById('scrollTop').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ═══════════════════════════════════
+   3. QUANTITY CONTROLS
+═══════════════════════════════════ */
+function changeQty(item, delta) {
+  const max = item === 'paket' ? 20 : 50;
+  qty[item] = Math.max(0, Math.min(max, qty[item] + delta));
+
+  // Update input display
+  const inputMap = { bakso: 'qtyBakso', es: 'qtyEs', paket: 'qtyPaket' };
+  document.getElementById(inputMap[item]).value = qty[item];
+
+  // Highlight item row if qty > 0
+  const rowMap = { bakso: 'itemBakso', es: 'itemEs', paket: 'itemPaket' };
+  const row = document.getElementById(rowMap[item]);
+  row.style.borderColor = qty[item] > 0
+    ? (item === 'es' ? 'var(--yellow-main)' : 'var(--green-main)')
+    : '';
+  row.style.background = qty[item] > 0
+    ? (item === 'paket' ? 'var(--yellow-pale)' : item === 'es' ? '#fffdf0' : 'var(--green-pale)')
+    : '';
+
+  updateSummary();
+  clearItemError();
+}
+
+/* ═══════════════════════════════════
+   4. ORDER SUMMARY (live update)
+═══════════════════════════════════ */
+function updateSummary() {
+  const lines    = document.getElementById('summaryLines');
+  const totalEl  = document.getElementById('totalPrice');
+  let total      = 0;
+  let html       = '';
+
+  Object.entries(qty).forEach(([key, q]) => {
+    if (q > 0) {
+      const subtotal = q * PRICES[key];
+      total += subtotal;
+      const unit = key === 'bakso' ? 'pcs' : key === 'es' ? 'cup' : 'paket';
+      html += `
+        <div class="summary-line">
+          <span>${PRODUCT_NAMES[key]} × ${q} ${unit}</span>
+          <span style="font-weight:600;color:var(--green-main)">${formatRp(subtotal)}</span>
+        </div>`;
+    }
+  });
+
+  lines.innerHTML = html || '<div class="summary-empty">Belum ada item dipilih</div>';
+  totalEl.textContent = formatRp(total);
+  totalEl.style.color = total > 0 ? 'var(--green-main)' : '';
+}
+
+function formatRp(num) {
+  return 'Rp' + num.toLocaleString('id-ID');
+}
+
+/* ═══════════════════════════════════
+   5. FORM VALIDATION
+═══════════════════════════════════ */
+function validateForm() {
+  let valid = true;
+
+  // Name
+  const name = document.getElementById('customerName').value.trim();
+  if (!name) {
+    showError('nameError', 'Nama tidak boleh kosong.');
+    document.getElementById('customerName').classList.add('error');
+    valid = false;
+  } else if (name.length < 2) {
+    showError('nameError', 'Nama minimal 2 karakter.');
+    document.getElementById('customerName').classList.add('error');
+    valid = false;
+  } else {
+    clearError('nameError');
+    document.getElementById('customerName').classList.remove('error');
+  }
+
+  // Phone — auto strip leading 0, accept both formats
+  let phone = document.getElementById('customerPhone').value.trim();
+  // If user typed 085xxx, strip the leading 0
+  if (phone.startsWith('0')) phone = phone.substring(1);
+  document.getElementById('customerPhone').value = phone; // update field display
+  const phoneRegex = /^8[0-9]{8,12}$/;
+  if (!phone) {
+    showError('phoneError', 'Nomor WhatsApp tidak boleh kosong.');
+    document.getElementById('customerPhone').classList.add('error');
+    valid = false;
+  } else if (!phoneRegex.test(phone)) {
+    showError('phoneError', 'Format tidak valid. Contoh: 085xxx atau 85xxx');
+    document.getElementById('customerPhone').classList.add('error');
+    valid = false;
+  } else {
+    clearError('phoneError');
+    document.getElementById('customerPhone').classList.remove('error');
+  }
+
+  // Pickup method
+  const pickup = document.getElementById('pickupMethod').value;
+  if (!pickup) {
+    showError('pickupError', 'Pilih metode pengambilan.');
+    document.getElementById('pickupMethod').classList.add('error');
+    valid = false;
+  } else {
+    clearError('pickupError');
+    document.getElementById('pickupMethod').classList.remove('error');
+  }
+
+  // At least 1 item
+  const totalQty = qty.bakso + qty.es + qty.paket;
+  if (totalQty === 0) {
+    showError('itemError', 'Pilih minimal 1 item pesanan.');
+    valid = false;
+  } else {
+    clearError('itemError');
+  }
+
+  return valid;
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = msg;
+}
+function clearError(id) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = '';
+}
+function clearItemError() {
+  clearError('itemError');
+}
+
+// Live clear on input
+['customerName', 'customerPhone', 'pickupMethod'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    const errMap = {
+      customerName: 'nameError',
+      customerPhone: 'phoneError',
+      pickupMethod: 'pickupError',
+    };
+    clearError(errMap[id]);
+    document.getElementById(id).classList.remove('error');
+  });
+});
+
+/* ═══════════════════════════════════
+   6. ORDER ID GENERATOR
+═══════════════════════════════════ */
+function generateOrderId() {
+  const now    = new Date();
+  const date   = now.toISOString().slice(2, 10).replace(/-/g, ''); // YYMMDD
+  const rand   = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `MD-${date}-${rand}`;
+}
+
+/* ═══════════════════════════════════
+   7. WHATSAPP MESSAGE BUILDER
+═══════════════════════════════════ */
+function buildWAMessage(orderId, name, phone, pickup, items, total, note) {
+  const pickupLabel = pickup === 'pickup'
+    ? 'Ambil Langsung (Pick-up)'
+    : 'Pre-Order (konfirmasi jadwal)';
+
+  let itemLines = '';
+  items.forEach(({ name: n, qty: q, subtotal }) => {
+    itemLines += `  • ${n} × ${q} = ${formatRp(subtotal)}\n`;
+  });
+
+  const msg = [
+    `Halo Admin ${CONFIG.storeName} 👋`,
+    ``,
+    `Saya ingin konfirmasi pesanan berikut:`,
+    ``,
+    `📋 *DETAIL PESANAN*`,
+    `🔖 No. Order  : *${orderId}*`,
+    `👤 Nama       : ${name}`,
+    `📱 WhatsApp   : +62${phone}`,
+    `🛍️ Metode      : ${pickupLabel}`,
+    ``,
+    `🧾 *ITEM PESANAN*`,
+    itemLines.trimEnd(),
+    ``,
+    `💰 *Total     : ${formatRp(total)}*`,
+    `💳 Pembayaran : QRIS`,
+    note ? `\n📝 Catatan    : ${note}` : '',
+    ``,
+    `📍 Lokasi     : ${CONFIG.location}`,
+    ``,
+    `Mohon konfirmasi pesanan saya. Terima kasih! 🙏`,
+  ].filter(line => line !== null && line !== undefined).join('\n');
+
+  return encodeURIComponent(msg);
+}
+
+/* ═══════════════════════════════════
+   8. FORM SUBMIT
+═══════════════════════════════════ */
+document.getElementById('orderForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  if (!validateForm()) return;
+
+  const name   = document.getElementById('customerName').value.trim();
+  // Read phone after validateForm may have stripped leading 0
+  let phone    = document.getElementById('customerPhone').value.trim();
+  if (phone.startsWith('0')) phone = phone.substring(1);
+  const pickup = document.getElementById('pickupMethod').value;
+  const note   = document.getElementById('orderNote').value.trim();
+
+  // Build items array
+  const items = [];
+  Object.entries(qty).forEach(([key, q]) => {
+    if (q > 0) {
+      items.push({
+        name: PRODUCT_NAMES[key],
+        qty: q,
+        subtotal: q * PRICES[key],
+      });
+    }
+  });
+
+  const total   = items.reduce((sum, i) => sum + i.subtotal, 0);
+  const orderId = generateOrderId();
+
+  // Show modal
+  openModal({ orderId, name, phone, pickup, items, total, note });
+});
+
+/* ═══════════════════════════════════
+   9. MODAL
+═══════════════════════════════════ */
+function openModal({ orderId, name, phone, pickup, items, total, note }) {
+  const overlay = document.getElementById('confirmModal');
+
+  // Order ID
+  document.getElementById('modalOrderId').textContent = orderId;
+
+  // Details
+  const pickupLabel = pickup === 'pickup' ? 'Ambil Langsung (Pick-up)' : 'Pre-Order';
+  let detailHTML = `
+    <div><strong>Nama:</strong> ${escapeHTML(name)}</div>
+    <div><strong>WhatsApp:</strong> +62${escapeHTML(phone)}</div>
+    <div><strong>Metode:</strong> ${pickupLabel}</div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
+  `;
+  items.forEach(item => {
+    detailHTML += `<div><strong>${escapeHTML(item.name)}</strong> × ${item.qty} = <span style="color:var(--green-main);font-weight:700">${formatRp(item.subtotal)}</span></div>`;
+  });
+  detailHTML += `<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
+    <div><strong>Total Bayar (QRIS):</strong> <span style="color:var(--green-main);font-size:1.05rem;font-weight:800">${formatRp(total)}</span></div>`;
+  if (note) {
+    detailHTML += `<div style="margin-top:6px"><strong>Catatan:</strong> ${escapeHTML(note)}</div>`;
+  }
+  document.getElementById('modalDetails').innerHTML = detailHTML;
+
+  // WA Button — build message then set href + onclick fallback
+  const waMsg = buildWAMessage(orderId, name, phone, pickup, items, total, note);
+  const waUrl = `https://wa.me/${CONFIG.adminWA}?text=${waMsg}`;
+  const waBtnEl = document.getElementById('waBtn');
+  waBtnEl.href = waUrl;
+  waBtnEl.onclick = function(e) {
+    e.preventDefault();
+    window.open(waUrl, '_blank') || (window.location.href = waUrl);
+  };
+
+  // Show modal
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  const overlay = document.getElementById('confirmModal');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+
+  // Reset form after close
+  resetForm();
+}
+
+// Close modal on overlay click
+document.getElementById('confirmModal').addEventListener('click', function (e) {
+  if (e.target === this) closeModal();
+});
+
+// Close on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+function resetForm() {
+  document.getElementById('orderForm').reset();
+  qty.bakso = 0; qty.es = 0; qty.paket = 0;
+  document.getElementById('qtyBakso').value = 0;
+  document.getElementById('qtyEs').value    = 0;
+  document.getElementById('qtyPaket').value = 0;
+
+  // Reset row styles
+  ['itemBakso','itemEs'].forEach(id => {
+    const row = document.getElementById(id);
+    row.style.borderColor = '';
+    row.style.background  = '';
+  });
+  // Bundle item: restore its CSS class background by removing inline override
+  const paketRow = document.getElementById('itemPaket');
+  paketRow.style.borderColor = '';
+  paketRow.style.background  = '';
+
+  updateSummary();
+  ['nameError','phoneError','pickupError','itemError'].forEach(clearError);
+  ['customerName','customerPhone','pickupMethod'].forEach(id => {
+    document.getElementById(id).classList.remove('error');
+  });
+}
+
+/* ═══════════════════════════════════
+   10. COPY ORDER ID
+═══════════════════════════════════ */
+function copyOrderId() {
+  const id   = document.getElementById('modalOrderId').textContent;
+  const btn  = document.querySelector('.copy-btn');
+
+  navigator.clipboard.writeText(id).then(() => {
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+    btn.style.background = 'var(--green-main)';
+    btn.style.color = 'var(--white)';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 2000);
+  }).catch(() => {
+    // fallback for older browsers
+    const el = document.createElement('textarea');
+    el.value = id;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+    setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i>'; }, 2000);
+  });
+}
+
+/* ═══════════════════════════════════
+   11. SCROLL TO ORDER (from menu btn)
+═══════════════════════════════════ */
+function scrollToOrder(preSelect) {
+  document.getElementById('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Pre-fill qty based on selected product
+  setTimeout(() => {
+    if (preSelect === 'bakso') changeQty('bakso', 1);
+    else if (preSelect === 'es')   changeQty('es', 1);
+    else if (preSelect === 'paket') changeQty('paket', 1);
+  }, 600);
+}
+
+/* ═══════════════════════════════════
+   12. UPDATE WA NUMBER IN CONTACT
+═══════════════════════════════════ */
+function updateDisplayWA() {
+  const el = document.getElementById('displayWaNumber');
+  if (el) {
+    // Format: +62 852-3764-8941
+    const raw = CONFIG.adminWA.replace(/^62/, '');
+    const formatted = '+62 ' + raw.replace(/(\d{3})(\d{4})(\d{4,})/, '$1-$2-$3');
+    el.textContent = formatted;
+  }
+}
+
+/* ═══════════════════════════════════
+   13. HELPER — XSS safe
+═══════════════════════════════════ */
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+/* ═══════════════════════════════════
+   14. INIT
+═══════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  updateSummary();
+  updateDisplayWA();
+  highlightActiveNav();
+
+  // Animate hero elements on load
+  const heroContent = document.querySelector('.hero-content');
+  if (heroContent) heroContent.classList.add('fade-in-up');
+
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.menu-card, .side-card, .step, .qris-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+    observer.observe(el);
+  });
+});
