@@ -21,7 +21,13 @@ const CONFIG = {
 const PRICES = {
   bakso: 1000,
   es:    6000,
-  paket: 10000,
+  paket: 10000, // default Paket S, will be overridden by tier
+};
+
+const PAKET_TIERS = {
+  S: { label: 'Paket S (5 Bakso + 1 Es)', price: 10000, normalPrice: 11000 },
+  M: { label: 'Paket M (10 Bakso + 1 Es)', price: 14000, normalPrice: 16000 },
+  L: { label: 'Paket L (10 Bakso + 2 Es)', price: 19000, normalPrice: 22000 },
 };
 
 const PRODUCT_NAMES = {
@@ -118,11 +124,13 @@ function updateSummary() {
   let total      = 0;
   let html       = '';
 
-  Object.entries(qty).forEach(([key, q]) => {
+  // Bakso & Es satuan
+  ['bakso', 'es'].forEach(key => {
+    const q = qty[key];
     if (q > 0) {
       const subtotal = q * PRICES[key];
       total += subtotal;
-      const unit = key === 'bakso' ? 'pcs' : key === 'es' ? 'cup' : 'paket';
+      const unit = key === 'bakso' ? 'pcs' : 'cup';
       html += `
         <div class="summary-line">
           <span>${PRODUCT_NAMES[key]} × ${q} ${unit}</span>
@@ -130,6 +138,21 @@ function updateSummary() {
         </div>`;
     }
   });
+
+  // Paket bundle — harga tergantung tier
+  if (qty.paket > 0) {
+    const tierSel = document.getElementById('paketTier');
+    const tier    = tierSel ? PAKET_TIERS[tierSel.value] : null;
+    const tierPrice = tier ? tier.price : 10000;
+    const tierLabel = tier ? tier.label : 'Paket Bundle';
+    const subtotal  = qty.paket * tierPrice;
+    total += subtotal;
+    html += `
+      <div class="summary-line">
+        <span>${tierLabel} × ${qty.paket}</span>
+        <span style="font-weight:600;color:var(--yellow-dark)">${formatRp(subtotal)}</span>
+      </div>`;
+  }
 
   lines.innerHTML = html || '<div class="summary-empty">Belum ada item dipilih</div>';
   totalEl.textContent = formatRp(total);
@@ -228,6 +251,9 @@ function clearItemError() {
   });
 });
 
+// Update summary when paket tier changes
+document.getElementById('paketTier').addEventListener('change', updateSummary);
+
 /* ═══════════════════════════════════
    6. ORDER ID GENERATOR
 ═══════════════════════════════════ */
@@ -294,15 +320,18 @@ document.getElementById('orderForm').addEventListener('submit', function (e) {
 
   // Build items array
   const items = [];
-  Object.entries(qty).forEach(([key, q]) => {
-    if (q > 0) {
-      items.push({
-        name: PRODUCT_NAMES[key],
-        qty: q,
-        subtotal: q * PRICES[key],
-      });
+  // Bakso & Es satuan
+  ['bakso', 'es'].forEach(key => {
+    if (qty[key] > 0) {
+      items.push({ name: PRODUCT_NAMES[key], qty: qty[key], subtotal: qty[key] * PRICES[key] });
     }
   });
+  // Paket — ambil tier yang dipilih
+  if (qty.paket > 0) {
+    const tierSel   = document.getElementById('paketTier');
+    const tier      = PAKET_TIERS[tierSel.value] || PAKET_TIERS['S'];
+    items.push({ name: tier.label, qty: qty.paket, subtotal: qty.paket * tier.price });
+  }
 
   const total   = items.reduce((sum, i) => sum + i.subtotal, 0);
   const orderId = generateOrderId();

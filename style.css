@@ -1138,3 +1138,51 @@ select {
 
   .section-title { font-size: 1.6rem; }
 }
+
+/* ════════════════════════════════
+   BUNDLE TIERS
+════════════════════════════════ */
+.bundle-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.tier {
+  background: var(--bg-light);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  position: relative;
+  transition: border-color var(--transition);
+}
+.tier:hover { border-color: var(--green-light); }
+.tier-popular {
+  border-color: var(--green-main);
+  background: var(--green-pale);
+}
+.tier-best {
+  border-color: var(--yellow-main);
+  background: var(--yellow-pale);
+}
+.tier-badge {
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--green-main);
+  padding: 2px 8px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.tier-best .tier-badge { background: var(--yellow-dark); }
+.tier-name { font-weight: 700; font-size: .88rem; color: var(--text-dark); }
+.tier-isi  { font-size: .8rem; color: var(--text-light); margin: 2px 0 4px; }
+.tier-price { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.price-new  { font-size: 1rem; font-weight: 800; color: var(--green-main); }
+.tier-best .price-new { color: var(--yellow-dark); }
+.price-save {
+  font-size: .72rem; font-weight: 700;
+  background: #e74c3c; color: var(--white);
+  padding: 2px 7px; border-radius: 8px;
+}

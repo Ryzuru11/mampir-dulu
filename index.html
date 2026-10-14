@@ -163,7 +163,7 @@
 
         <!-- Card 3: Paket Bundling -->
         <div class="menu-card card-bundle">
-          <div class="bundle-ribbon">🔥 Hemat!</div>
+          <div class="bundle-ribbon">🔥 Hemat s/d Rp3.000!</div>
           <div class="menu-img-wrap">
             <div class="menu-img" style="padding:0;overflow:hidden;">
               <img src="assets/images/menu_paket.jpg" alt="Paket Mampir Dulu" style="width:100%;height:200px;object-fit:cover;" />
@@ -171,17 +171,50 @@
           </div>
           <div class="menu-body">
             <h3 class="menu-name">Paket Mampir Dulu <span class="bundle-label">Bundle</span></h3>
-            <p class="menu-desc-id">Bakso Tahu Goreng (5 pcs) + Es Mangga Lumut (1 cup) — nikmati camilan dan minuman sekaligus dalam satu paket praktis dan ekonomis.</p>
-            <p class="menu-desc-en"><em>Best value combo! 5 pcs Fried Tofu Balls + 1 cup Es Mangga Lumut. One stop, one price, full satisfaction.</em></p>
-            <div class="menu-tags">
+            <p class="menu-desc-id">Pilih paket sesuai selera — makin banyak, makin hemat!</p>
+            <p class="menu-desc-en"><em>The more you order, the more you save. Great for sharing!</em></p>
+
+            <!-- Paket tiers -->
+            <div class="bundle-tiers">
+              <div class="tier">
+                <div class="tier-name">🥉 Paket S</div>
+                <div class="tier-isi">5 Bakso + 1 Es Mangga</div>
+                <div class="tier-price">
+                  <span class="price-old">Rp11.000</span>
+                  <span class="price-new">Rp10.000</span>
+                  <span class="price-save">hemat Rp1.000</span>
+                </div>
+              </div>
+              <div class="tier tier-popular">
+                <div class="tier-badge">⭐ Terpopuler</div>
+                <div class="tier-name">🥈 Paket M</div>
+                <div class="tier-isi">10 Bakso + 1 Es Mangga</div>
+                <div class="tier-price">
+                  <span class="price-old">Rp16.000</span>
+                  <span class="price-new">Rp14.000</span>
+                  <span class="price-save">hemat Rp2.000</span>
+                </div>
+              </div>
+              <div class="tier tier-best">
+                <div class="tier-badge">💰 Paling Hemat</div>
+                <div class="tier-name">🥇 Paket L</div>
+                <div class="tier-isi">10 Bakso + 2 Es Mangga</div>
+                <div class="tier-price">
+                  <span class="price-old">Rp22.000</span>
+                  <span class="price-new">Rp19.000</span>
+                  <span class="price-save">hemat Rp3.000</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="menu-tags" style="margin-top:14px;">
               <span class="tag">💰 Best Value</span>
               <span class="tag">🎁 Bundle</span>
               <span class="tag">👫 Share-able</span>
             </div>
             <div class="menu-footer">
-              <div class="menu-price bundle-price">
-                <span class="price-old">Rp11.000</span>
-                Rp10.000
+              <div class="menu-price bundle-price" style="font-size:.9rem;">
+                mulai <strong style="font-size:1.1rem;">Rp10.000</strong>
               </div>
               <button class="btn-add btn-add-bundle" onclick="scrollToOrder('paket')">
                 <i class="fa-solid fa-plus"></i> Pesan
@@ -278,14 +311,26 @@
                 <div class="item-info">
                   <div class="item-icon bundle-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
                   <div>
-                    <div class="item-name">Paket Mampir Dulu <span class="bundle-tag">Bundle</span></div>
-                    <div class="item-price">Rp10.000 / paket (5 Bakso + 1 Es)</div>
+                    <div class="item-name">Paket Bundle</div>
+                    <div class="item-price" style="display:flex;flex-direction:column;gap:2px;">
+                      <span>🥉 Paket S — 5 Bakso + 1 Es = <strong>Rp10.000</strong> <s style="color:var(--text-muted);font-size:.75rem">Rp11.000</s></span>
+                      <span>🥈 Paket M — 10 Bakso + 1 Es = <strong>Rp14.000</strong> <s style="color:var(--text-muted);font-size:.75rem">Rp16.000</s></span>
+                      <span>🥇 Paket L — 10 Bakso + 2 Es = <strong>Rp19.000</strong> <s style="color:var(--text-muted);font-size:.75rem">Rp22.000</s></span>
+                    </div>
                   </div>
                 </div>
-                <div class="qty-control">
-                  <button type="button" class="qty-btn" onclick="changeQty('paket', -1)"><i class="fa-solid fa-minus"></i></button>
-                  <input type="number" id="qtyPaket" value="0" min="0" max="20" readonly class="qty-input" />
-                  <button type="button" class="qty-btn" onclick="changeQty('paket', 1)"><i class="fa-solid fa-plus"></i></button>
+                <div style="width:100%;margin-top:10px;">
+                  <select id="paketTier" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;font-family:var(--font);">
+                    <option value="" disabled selected>-- Pilih paket --</option>
+                    <option value="S">🥉 Paket S — 5 Bakso + 1 Es = Rp10.000</option>
+                    <option value="M">🥈 Paket M — 10 Bakso + 1 Es = Rp14.000</option>
+                    <option value="L">🥇 Paket L — 10 Bakso + 2 Es = Rp19.000</option>
+                  </select>
+                  <div class="qty-control" style="margin-top:8px;justify-content:flex-end;">
+                    <button type="button" class="qty-btn" onclick="changeQty('paket', -1)"><i class="fa-solid fa-minus"></i></button>
+                    <input type="number" id="qtyPaket" value="0" min="0" max="20" readonly class="qty-input" />
+                    <button type="button" class="qty-btn" onclick="changeQty('paket', 1)"><i class="fa-solid fa-plus"></i></button>
+                  </div>
                 </div>
               </div>
 
