@@ -1,23 +1,23 @@
-/* ═══════════════════════════════════════════════
-   MAMPIR DULU — script.js
+﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MAMPIR DULU â€” script.js
    Handles: navbar, order qty, form validation,
             order ID generation, modal, WA message
-   ═══════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 'use strict';
 
-/* ─────────────────────────────────────
-   CONFIG — ganti nomor WA admin di sini
-───────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   CONFIG â€” ganti nomor WA admin di sini
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const CONFIG = {
   adminWA: '6285237648941',   // WA Admin Mampir Dulu
   storeName: 'Mampir Dulu',
   location: 'Lt. 1 Gedung Siti Moendjijah, UNISA Yogyakarta',
 };
 
-/* ─────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    PRICES
-───────────────────────────────────── */
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICES = {
   bakso: 1000,
   es:    6000,
@@ -25,25 +25,25 @@ const PRICES = {
 };
 
 const PAKET_TIERS = {
-  S: { label: 'Paket S (5 Bakso + 1 Es)', price: 10000, normalPrice: 11000 },
-  M: { label: 'Paket M (10 Bakso + 1 Es)', price: 14000, normalPrice: 16000 },
-  L: { label: 'Paket L (10 Bakso + 2 Es)', price: 19000, normalPrice: 22000 },
+  S: { label: 'Paket S (5 Batagor + 1 Es)', price: 10000, normalPrice: 11000 },
+  M: { label: 'Paket M (10 Batagor + 1 Es)', price: 14000, normalPrice: 16000 },
+  L: { label: 'Paket L (10 Batagor + 2 Es)', price: 19000, normalPrice: 22000 },
 };
 
 const PRODUCT_NAMES = {
-  bakso: 'Bakso Tahu Goreng',
+  bakso: 'Batagor',
   es:    'Es Mangga Lumut',
-  paket: 'Paket Mampir Dulu (5 Bakso + 1 Es)',
+  paket: 'Paket Mampir Dulu (5 Batagor + 1 Es)',
 };
 
-/* ─────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    STATE
-───────────────────────────────────── */
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const qty = { bakso: 0, es: 0, paket: 0 };
 
-/* ═══════════════════════════════════
-   1. NAVBAR — scroll effect + mobile
-═══════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   1. NAVBAR â€” scroll effect + mobile
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const navbar    = document.getElementById('navbar');
 const hamburger = document.getElementById('hamburger');
 const navLinks  = document.getElementById('navLinks');
@@ -83,16 +83,16 @@ function highlightActiveNav() {
   });
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    2. SCROLL-TO-TOP BUTTON
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 document.getElementById('scrollTop').addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    3. QUANTITY CONTROLS
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function changeQty(item, delta) {
   const max = item === 'paket' ? 20 : 50;
   qty[item] = Math.max(0, Math.min(max, qty[item] + delta));
@@ -115,9 +115,9 @@ function changeQty(item, delta) {
   clearItemError();
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    4. ORDER SUMMARY (live update)
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function updateSummary() {
   const lines    = document.getElementById('summaryLines');
   const totalEl  = document.getElementById('totalPrice');
@@ -133,13 +133,13 @@ function updateSummary() {
       const unit = key === 'bakso' ? 'pcs' : 'cup';
       html += `
         <div class="summary-line">
-          <span>${PRODUCT_NAMES[key]} × ${q} ${unit}</span>
+          <span>${PRODUCT_NAMES[key]} Ã— ${q} ${unit}</span>
           <span style="font-weight:600;color:var(--green-main)">${formatRp(subtotal)}</span>
         </div>`;
     }
   });
 
-  // Paket bundle — harga tergantung tier
+  // Paket bundle â€” harga tergantung tier
   if (qty.paket > 0) {
     const tierSel = document.getElementById('paketTier');
     const tier    = tierSel ? PAKET_TIERS[tierSel.value] : null;
@@ -149,7 +149,7 @@ function updateSummary() {
     total += subtotal;
     html += `
       <div class="summary-line">
-        <span>${tierLabel} × ${qty.paket}</span>
+        <span>${tierLabel} Ã— ${qty.paket}</span>
         <span style="font-weight:600;color:var(--yellow-dark)">${formatRp(subtotal)}</span>
       </div>`;
   }
@@ -163,9 +163,9 @@ function formatRp(num) {
   return 'Rp' + num.toLocaleString('id-ID');
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    5. FORM VALIDATION
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function validateForm() {
   let valid = true;
 
@@ -184,7 +184,7 @@ function validateForm() {
     document.getElementById('customerName').classList.remove('error');
   }
 
-  // Phone — auto strip leading 0, accept both formats
+  // Phone â€” auto strip leading 0, accept both formats
   let phone = document.getElementById('customerPhone').value.trim();
   // If user typed 085xxx, strip the leading 0
   if (phone.startsWith('0')) phone = phone.substring(1);
@@ -254,9 +254,9 @@ function clearItemError() {
 // Update summary when paket tier changes
 document.getElementById('paketTier').addEventListener('change', updateSummary);
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    6. ORDER ID GENERATOR
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function generateOrderId() {
   const now    = new Date();
   const date   = now.toISOString().slice(2, 10).replace(/-/g, ''); // YYMMDD
@@ -264,9 +264,9 @@ function generateOrderId() {
   return `MD-${date}-${rand}`;
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    7. WHATSAPP MESSAGE BUILDER
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildWAMessage(orderId, name, phone, pickup, items, total, note) {
   const pickupLabel = pickup === 'pickup'
     ? 'Ambil Langsung (Pick-up)'
@@ -274,38 +274,38 @@ function buildWAMessage(orderId, name, phone, pickup, items, total, note) {
 
   let itemLines = '';
   items.forEach(({ name: n, qty: q, subtotal }) => {
-    itemLines += `  • ${n} × ${q} = ${formatRp(subtotal)}\n`;
+    itemLines += `  â€¢ ${n} Ã— ${q} = ${formatRp(subtotal)}\n`;
   });
 
   const msg = [
-    `Halo Admin ${CONFIG.storeName} 👋`,
+    `Halo Admin ${CONFIG.storeName} ðŸ‘‹`,
     ``,
     `Saya ingin konfirmasi pesanan berikut:`,
     ``,
-    `📋 *DETAIL PESANAN*`,
-    `🔖 No. Order  : *${orderId}*`,
-    `👤 Nama       : ${name}`,
-    `📱 WhatsApp   : +62${phone}`,
-    `🛍️ Metode      : ${pickupLabel}`,
+    `ðŸ“‹ *DETAIL PESANAN*`,
+    `ðŸ”– No. Order  : *${orderId}*`,
+    `ðŸ‘¤ Nama       : ${name}`,
+    `ðŸ“± WhatsApp   : +62${phone}`,
+    `ðŸ›ï¸ Metode      : ${pickupLabel}`,
     ``,
-    `🧾 *ITEM PESANAN*`,
+    `ðŸ§¾ *ITEM PESANAN*`,
     itemLines.trimEnd(),
     ``,
-    `💰 *Total     : ${formatRp(total)}*`,
-    `💳 Pembayaran : QRIS`,
-    note ? `\n📝 Catatan    : ${note}` : '',
+    `ðŸ’° *Total     : ${formatRp(total)}*`,
+    `ðŸ’³ Pembayaran : QRIS`,
+    note ? `\nðŸ“ Catatan    : ${note}` : '',
     ``,
-    `📍 Lokasi     : ${CONFIG.location}`,
+    `ðŸ“ Lokasi     : ${CONFIG.location}`,
     ``,
-    `Mohon konfirmasi pesanan saya. Terima kasih! 🙏`,
+    `Mohon konfirmasi pesanan saya. Terima kasih! ðŸ™`,
   ].filter(line => line !== null && line !== undefined).join('\n');
 
   return encodeURIComponent(msg);
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    8. FORM SUBMIT
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 document.getElementById('orderForm').addEventListener('submit', function (e) {
   e.preventDefault();
 
@@ -326,7 +326,7 @@ document.getElementById('orderForm').addEventListener('submit', function (e) {
       items.push({ name: PRODUCT_NAMES[key], qty: qty[key], subtotal: qty[key] * PRICES[key] });
     }
   });
-  // Paket — ambil tier yang dipilih
+  // Paket â€” ambil tier yang dipilih
   if (qty.paket > 0) {
     const tierSel   = document.getElementById('paketTier');
     const tier      = PAKET_TIERS[tierSel.value] || PAKET_TIERS['S'];
@@ -340,9 +340,9 @@ document.getElementById('orderForm').addEventListener('submit', function (e) {
   openModal({ orderId, name, phone, pickup, items, total, note });
 });
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    9. MODAL
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function openModal({ orderId, name, phone, pickup, items, total, note }) {
   const overlay = document.getElementById('confirmModal');
 
@@ -358,7 +358,7 @@ function openModal({ orderId, name, phone, pickup, items, total, note }) {
     <hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
   `;
   items.forEach(item => {
-    detailHTML += `<div><strong>${escapeHTML(item.name)}</strong> × ${item.qty} = <span style="color:var(--green-main);font-weight:700">${formatRp(item.subtotal)}</span></div>`;
+    detailHTML += `<div><strong>${escapeHTML(item.name)}</strong> Ã— ${item.qty} = <span style="color:var(--green-main);font-weight:700">${formatRp(item.subtotal)}</span></div>`;
   });
   detailHTML += `<hr style="border:none;border-top:1px solid var(--border);margin:8px 0">
     <div><strong>Total Bayar (QRIS):</strong> <span style="color:var(--green-main);font-size:1.05rem;font-weight:800">${formatRp(total)}</span></div>`;
@@ -367,7 +367,7 @@ function openModal({ orderId, name, phone, pickup, items, total, note }) {
   }
   document.getElementById('modalDetails').innerHTML = detailHTML;
 
-  // WA Button — build message then set href + onclick fallback
+  // WA Button â€” build message then set href + onclick fallback
   const waMsg = buildWAMessage(orderId, name, phone, pickup, items, total, note);
   const waUrl = `https://wa.me/${CONFIG.adminWA}?text=${waMsg}`;
   const waBtnEl = document.getElementById('waBtn');
@@ -426,9 +426,9 @@ function resetForm() {
   });
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    10. COPY ORDER ID
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function copyOrderId() {
   const id   = document.getElementById('modalOrderId').textContent;
   const btn  = document.querySelector('.copy-btn');
@@ -455,9 +455,9 @@ function copyOrderId() {
   });
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    11. SCROLL TO ORDER (from menu btn)
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function scrollToOrder(preSelect) {
   document.getElementById('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -469,9 +469,9 @@ function scrollToOrder(preSelect) {
   }, 600);
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    12. UPDATE WA NUMBER IN CONTACT
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function updateDisplayWA() {
   const el = document.getElementById('displayWaNumber');
   if (el) {
@@ -482,18 +482,18 @@ function updateDisplayWA() {
   }
 }
 
-/* ═══════════════════════════════════
-   13. HELPER — XSS safe
-═══════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   13. HELPER â€” XSS safe
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function escapeHTML(str) {
   const div = document.createElement('div');
   div.appendChild(document.createTextNode(str));
   return div.innerHTML;
 }
 
-/* ═══════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    14. INIT
-═══════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 document.addEventListener('DOMContentLoaded', () => {
   updateSummary();
   updateDisplayWA();
@@ -520,3 +520,4 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(el);
   });
 });
+
