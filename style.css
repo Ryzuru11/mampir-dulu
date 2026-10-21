@@ -1186,3 +1186,17 @@ select {
   background: #e74c3c; color: var(--white);
   padding: 2px 7px; border-radius: 8px;
 }
+
+/* ── Logo image di navbar & footer ── */
+.nav-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.footer-logo-img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  border-radius: 10px;
+}
