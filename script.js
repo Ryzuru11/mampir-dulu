@@ -20,14 +20,14 @@ const CONFIG = {
 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const PRICES = {
   bakso: 1000,
-  es:    6000,
-  paket: 10000, // default Paket S, will be overridden by tier
+  es:    7000,
+  paket: 8000,
 };
 
 const PAKET_TIERS = {
-  S: { label: 'Paket S (5 Batagor + 1 Es)', price: 10000, normalPrice: 11000 },
-  M: { label: 'Paket M (10 Batagor + 1 Es)', price: 14000, normalPrice: 16000 },
-  L: { label: 'Paket L (10 Batagor + 2 Es)', price: 19000, normalPrice: 22000 },
+  S: { label: 'Paket S (3 Batagor + 1 Es)', price: 8000,  normalPrice: 8000  },
+  M: { label: 'Paket M (6 Batagor + 1 Es)', price: 11000, normalPrice: 13000 },
+  L: { label: 'Paket L (9 Batagor + 2 Es)', price: 18000, normalPrice: 23000 },
 };
 
 const PRODUCT_NAMES = {
