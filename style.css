@@ -83,7 +83,7 @@ input, select, textarea { font-family: var(--font); }
   max-width: 1160px;
   margin: 0 auto;
   padding: 0 24px;
-  height: 72px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
