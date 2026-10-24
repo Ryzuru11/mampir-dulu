@@ -70,11 +70,6 @@
           <span class="stat-num">Rp7.000</span>
           <span class="stat-label">/ Es Mangga Lumut</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num">Rp11.000</span>
-          <span class="stat-label">Paket Hemat</span>
-        </div>
       </div>
     </div>
     <div class="hero-visual">
@@ -159,64 +154,6 @@
           </div>
         </div>
 
-        <!-- Card 3: Paket Bundling -->
-        <div class="menu-card card-bundle">
-          <div class="bundle-ribbon">&#128293; Hemat s/d Rp3.000!</div>
-          <div class="menu-img-wrap">
-            <div class="menu-img" style="padding:0;overflow:hidden;">
-              <img src="assets/images/menu_paket.jpg" alt="Paket Mampir Dulu" style="width:100%;height:200px;object-fit:cover;" />
-            </div>
-          </div>
-          <div class="menu-body">
-            <h3 class="menu-name">Paket Mampir Dulu <span class="bundle-label">Bundle</span></h3>
-            <p class="menu-desc-id">Pilih paket sesuai selera &mdash; makin banyak, makin hemat!</p>
-            <p class="menu-desc-en"><em>The more you order, the more you save. Great for sharing!</em></p>
-            <div class="bundle-tiers">
-              <div class="tier">
-                <div class="tier-name">&#129351; Paket S</div>
-                <div class="tier-isi">3 Batagor + 1 Es Mangga</div>
-                <div class="tier-price">
-                  <span class="price-new">Rp8.000</span>
-                  <span class="price-save">harga normal</span>
-                </div>
-              </div>
-              <div class="tier tier-popular">
-                <div class="tier-badge">&#11088; Terpopuler</div>
-                <div class="tier-name">&#129352; Paket M</div>
-                <div class="tier-isi">6 Batagor + 1 Es Mangga</div>
-                <div class="tier-price">
-                  <span class="price-old">Rp13.000</span>
-                  <span class="price-new">Rp11.000</span>
-                  <span class="price-save">hemat Rp2.000</span>
-                </div>
-              </div>
-              <div class="tier tier-best">
-                <div class="tier-badge">&#128176; Paling Hemat</div>
-                <div class="tier-name">&#129353; Paket L</div>
-                <div class="tier-isi">9 Batagor + 2 Es Mangga</div>
-                <div class="tier-price">
-                  <span class="price-old">Rp23.000</span>
-                  <span class="price-new">Rp18.000</span>
-                  <span class="price-save">hemat Rp5.000</span>
-                </div>
-              </div>
-            </div>
-            <div class="menu-tags" style="margin-top:14px;">
-              <span class="tag">&#128176; Best Value</span>
-              <span class="tag">&#127873; Bundle</span>
-              <span class="tag">&#128107; Share-able</span>
-            </div>
-            <div class="menu-footer">
-              <div class="menu-price bundle-price" style="font-size:.9rem;">
-                mulai <strong style="font-size:1.1rem;">Rp8.000</strong>
-              </div>
-              <button class="btn-add btn-add-bundle" onclick="scrollToOrder('paket')">
-                <i class="fa-solid fa-plus"></i> Pesan
-              </button>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
@@ -295,33 +232,6 @@
                   <button type="button" class="qty-btn" onclick="changeQty('es', -1)"><i class="fa-solid fa-minus"></i></button>
                   <input type="number" id="qtyEs" value="0" min="0" max="50" readonly class="qty-input" />
                   <button type="button" class="qty-btn" onclick="changeQty('es', 1)"><i class="fa-solid fa-plus"></i></button>
-                </div>
-              </div>
-
-              <div class="order-item bundle-item" id="itemPaket">
-                <div class="item-info">
-                  <div class="item-icon bundle-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
-                  <div>
-                    <div class="item-name">Paket Bundle</div>
-                    <div class="item-price" style="display:flex;flex-direction:column;gap:2px;">
-                      <span>&#129351; Paket S &mdash; 3 Batagor + 1 Es = <strong>Rp8.000</strong></span>
-                      <span>&#129352; Paket M &mdash; 6 Batagor + 1 Es = <strong>Rp11.000</strong> <s style="color:var(--text-muted);font-size:.75rem">Rp13.000</s></span>
-                      <span>&#129353; Paket L &mdash; 9 Batagor + 2 Es = <strong>Rp18.000</strong> <s style="color:var(--text-muted);font-size:.75rem">Rp23.000</s></span>
-                    </div>
-                  </div>
-                </div>
-                <div style="width:100%;margin-top:10px;">
-                  <select id="paketTier" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;font-family:var(--font);">
-                    <option value="" disabled selected>-- Pilih paket --</option>
-                    <option value="S">&#129351; Paket S &mdash; 3 Batagor + 1 Es = Rp8.000</option>
-                    <option value="M">&#129352; Paket M &mdash; 6 Batagor + 1 Es = Rp11.000</option>
-                    <option value="L">&#129353; Paket L &mdash; 9 Batagor + 2 Es = Rp18.000</option>
-                  </select>
-                  <div class="qty-control" style="margin-top:8px;justify-content:flex-end;">
-                    <button type="button" class="qty-btn" onclick="changeQty('paket', -1)"><i class="fa-solid fa-minus"></i></button>
-                    <input type="number" id="qtyPaket" value="0" min="0" max="20" readonly class="qty-input" />
-                    <button type="button" class="qty-btn" onclick="changeQty('paket', 1)"><i class="fa-solid fa-plus"></i></button>
-                  </div>
                 </div>
               </div>
 
